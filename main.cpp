@@ -51,7 +51,7 @@ void snake_movement(char key, int dxdy[2]){
   int vect = 1;
   switch(key)
   {
-    case 'q': vect = -1;
+    case 'q': vect = -1; //this code produces warnings but I'm using the intended behavior of switch/case !
     case 'd': 
       if(dxdy[0] == -vect) return;
       dxdy[1] = 0;
@@ -72,7 +72,10 @@ bool verifyBorder(std::deque<std::pair<int,int>>& snake, const int& nx, const in
   //snake against itself
   for(int i = 1; i < snake.size(); i++)
     if(snake[0] == snake[i]) return false;
-  return true;
+  int x = std::get<0>(snake[0]);
+  int y = std::get<1>(snake[1]);
+  
+  return !((x == 0) || (x == (nx-1)) || (y == 0) || (y == (ny-1)));
 }
 
 std::deque<std::pair<int,int>> setupSnake( const int snake_len ){
