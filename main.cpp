@@ -11,6 +11,7 @@
 #include "internals.h"
 #include "display.h"
 #include "food.h"
+#include <SFML/Graphics.hpp>
 
 
 std::vector<int> backgroundSetup( const int& nx, const int& ny ){
@@ -47,7 +48,27 @@ void remove_snake(std::deque<std::pair<int,int>>& snake, std::vector<int>& bg, c
   }
 }
 
-void snake_movement(char key, int dxdy[2]){
+void snake_movement(sf::Keyboard::Key key, int dxdy[2]){ //char key, int dxdy[2]){
+  int vect = 1;
+  switch(key)
+  {
+    case sf::Keyboard::Q: vect = -1; //this code produces warnings but I'm using the intended behavior of switch/case !
+    case sf::Keyboard::D: 
+      if(dxdy[0] == -vect) return;
+      dxdy[1] = 0;
+      dxdy[0] = vect;
+      break;
+    case sf::Keyboard::Z: vect = -1;
+    case sf::Keyboard::S:
+      if(dxdy[1] == -vect) return;
+      dxdy[0] = 0;
+      dxdy[1] = vect; 
+      break;
+    default: ;
+  }
+}
+
+/*void snake_movement(char key, int dxdy[2]){
   int vect = 1;
   switch(key)
   {
@@ -65,7 +86,7 @@ void snake_movement(char key, int dxdy[2]){
       break;
     default: ;
   }
-}
+}*/
 
 bool verifyBorder(std::deque<std::pair<int,int>>& snake, const int& nx, const int& ny){
   //return true;
@@ -101,27 +122,72 @@ void startGame(const int& lap, const int& nx, const int& ny, int & snl, std::deq
     int dxdy[2] = {1,0};
     int food[2] = {0,0};
 
+    sf::RenderWindow app(sf::VideoMode(1000,500,32),"Snake");
+    
     createFood( bg, food, nx, ny );
-
-    while( true ){
+    
+    while(app.isOpen() ){
         internal::frameSleep(lap);
-        if( internal::keyEvent() ){
+        /*if( internal::keyEvent() ){
             //std::cin >> key; 
             key = _getch();//std::cin.get();
             snake_movement(key, dxdy);
+        }*/
+        sf::Event e;
+        while(app.pollEvent(e))
+        {
+          switch(e.type)
+          {
+            case sf::Event::Closed: app.close(); break;
+            case sf::Event::KeyPressed: snake_movement(e.key.code,dxdy); break;
+            default: ;
+          }
         }
-        backgroundClear();
-        add_snake( snake, bg, nx, ny );
-        printFrame(nx, ny, bg);
-        remove_snake(snake, bg, nx, ny);
+        //backgroundClear();
+        //add_snake( snake, bg, nx, ny );
+        //printFrame(nx, ny, bg);
+        //remove_snake(snake, bg, nx, ny);
+
+        app.clear(sf::Color(120, 200, 230));
+        sf::RectangleShape tile(sf::Vector2f(20,20));
+        //tile.setFillColor(sf::Color::Black);
+  
+        for( int j=0; j<ny; j++){
+          for( int i=0; i<nx; i++){
+            if( bg[i+j*nx] == 1 ){
+                tile.setPosition(i*20,j*20);
+                tile.setFillColor(sf::Color::Black);
+                app.draw(tile);
+            }
+            else if( bg[i+j*nx] == 2 ){
+                tile.setPosition(i*20,j*20);
+                tile.setFillColor(sf::Color::Green);
+                app.draw(tile);
+            }    
+          }
+        }
+        for(const auto & elem : snake)
+        {
+          int x = std::get<0>(elem);
+          int y = std::get<1>(elem);
+          tile.setPosition(x*20,y*20);
+          tile.setFillColor(sf::Color::Red);
+          app.draw(tile);
+        }
+        app.display();
+        
         bool out =  verifyBorder(snake, nx, ny);
         if( out == false){
             std::cerr << "" << std::endl;
+            app.close();
             exit(1);
         }
         bool eat = eatFood(food, snake);
         if(eat){
             createFood(bg, food, nx, ny);
+            int x = std::get<0>(snake[0]);
+            int y = std::get<1>(snake[0]);
+            bg[y*nx+x] = 0;
             snl++;
         }
         update_snake_coordinates(snake, snl, dxdy);
@@ -134,13 +200,13 @@ void startGame(const int& lap, const int& nx, const int& ny, int & snl, std::deq
 int main(){
     const int nx = 50;
     const int ny = 25;
-    const int lap=20;//200
+    const int lap=100;//200
 
     int snake_len = 3;
     srand(time(nullptr));
     
     std::vector<int> background = backgroundSetup(nx, ny);
-    printFrame(nx,ny, background);
+    //printFrame(nx,ny, background);
 
 
     std::deque<std::pair<int,int>> snake = setupSnake(snake_len);
