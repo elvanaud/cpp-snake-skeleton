@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <utility>
-#include "sys/ioctl.h"
+//#include "sys/ioctl.h"
 
 #include "stdlib.h"
 
@@ -30,25 +30,25 @@ std::vector<int> backgroundSetup( const int& nx, const int& ny ){
   return bg; 
 }
 
-void add_snake( /* your code here */ ){
+void add_snake(std::vector<std::pair<int,int>>& snake, std::vector<int>& bg, const int& nx, const int& ny){
   /*
     your code here
   */
 }
 
-void remove_snake( /* your code here */ ){
+void remove_snake(std::vector<std::pair<int,int>>& snake, std::vector<int>& bg, const int& nx, const int& ny){
   /*
     your code here
   */
 }
 
-void snake_movement( /* your code here */ ){
+void snake_movement(char key, int dxdy[2]){
   /*
     your code here
   */
 }
 
-bool verifyBorder( /* your code here */ ){
+bool verifyBorder(std::vector<std::pair<int,int>>& snake, const int& nx, const int& ny){
   /*
     your code here
   */
@@ -60,13 +60,13 @@ std::vector<std::pair<int,int>> setupSnake( const int snake_len ){
   */
 }
 
-void update_snake_coordinates( /* your code here */ ){
+void update_snake_coordinates(std::vector<std::pair<int,int>>& snake, const int & snl, int dxdy[2]){
   /*
     your code here
   */
 }
-/*
-void startGame(const int& lap, const int& nx, const int& ny, std::vector<std::pair<int,int>>& snake, std::vector<int>& bg){
+
+void startGame(const int& lap, const int& nx, const int& ny, int & snl, std::vector<std::pair<int,int>>& snake, std::vector<int>& bg){
     char key;
     int dxdy[2] = {1,0};
     int food[2] = {0,0};
@@ -98,7 +98,7 @@ void startGame(const int& lap, const int& nx, const int& ny, std::vector<std::pa
     }
 }
 
-*/
+
 
 int main(){
     const int nx = 50;
@@ -114,9 +114,9 @@ int main(){
 
     std::vector<std::pair<int,int>> snake = setupSnake(snake_len);
 
-    /*
+    
     startGame(lap, nx, ny, snake_len, snake, background);
-    */
+    
    return 0;
 }
 
