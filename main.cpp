@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <deque>
 #include <utility>
 //#include "sys/ioctl.h"
 
@@ -30,16 +31,18 @@ std::vector<int> backgroundSetup( const int& nx, const int& ny ){
   return bg; 
 }
 
-void add_snake(std::vector<std::pair<int,int>>& snake, std::vector<int>& bg, const int& nx, const int& ny){
-  /*
-    your code here
-  */
+void add_snake(std::deque<std::pair<int,int>>& snake, std::vector<int>& bg, const int& nx, const int& ny){
+  for(auto const & elem : snake)
+  {
+    bg[std::get<1>(elem)*nx+std::get<0>(elem)] = 2;
+  }
 }
 
-void remove_snake(std::vector<std::pair<int,int>>& snake, std::vector<int>& bg, const int& nx, const int& ny){
-  /*
-    your code here
-  */
+void remove_snake(std::deque<std::pair<int,int>>& snake, std::vector<int>& bg, const int& nx, const int& ny){
+  for(auto const & elem : snake)
+  {
+    bg[std::get<1>(elem)*nx+std::get<0>(elem)] = 0;
+  }
 }
 
 void snake_movement(char key, int dxdy[2]){
@@ -48,25 +51,31 @@ void snake_movement(char key, int dxdy[2]){
   */
 }
 
-bool verifyBorder(std::vector<std::pair<int,int>>& snake, const int& nx, const int& ny){
+bool verifyBorder(std::deque<std::pair<int,int>>& snake, const int& nx, const int& ny){
   /*
     your code here
   */
+  return true;
 }
 
-std::vector<std::pair<int,int>> setupSnake( const int snake_len ){
-  /*
-    your code here
-  */
+std::deque<std::pair<int,int>> setupSnake( const int snake_len ){
+  std::deque<std::pair<int,int>> snake;
+  std::pair<int,int> p = {25,12};
+  snake.push_back(p);
+  for(int i = 1; i < snake_len; i++)
+  {
+    std::pair<int,int> elem = snake.back();
+    snake.push_back(std::pair<int,int>{std::get<0>(elem)+1,std::get<1>(elem)});
+  }
+  return snake;
 }
 
-void update_snake_coordinates(std::vector<std::pair<int,int>>& snake, const int & snl, int dxdy[2]){
-  /*
-    your code here
-  */
+void update_snake_coordinates(std::deque<std::pair<int,int>>& snake, const int & snl, int dxdy[2]){
+  snake.pop_back();
+  snake.push_front(std::pair<int,int>{std::get<0>(snake[0])+dxdy[0],std::get<1>(snake[0])+dxdy[1]});
 }
 
-void startGame(const int& lap, const int& nx, const int& ny, int & snl, std::vector<std::pair<int,int>>& snake, std::vector<int>& bg){
+void startGame(const int& lap, const int& nx, const int& ny, int & snl, std::deque<std::pair<int,int>>& snake, std::vector<int>& bg){
     char key;
     int dxdy[2] = {1,0};
     int food[2] = {0,0};
@@ -112,7 +121,7 @@ int main(){
     printFrame(nx,ny, background);
 
 
-    std::vector<std::pair<int,int>> snake = setupSnake(snake_len);
+    std::deque<std::pair<int,int>> snake = setupSnake(snake_len);
 
     
     startGame(lap, nx, ny, snake_len, snake, background);
