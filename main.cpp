@@ -12,6 +12,7 @@
 #include "display.h"
 #include "food.h"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 
 std::vector<int> backgroundSetup( const int& nx, const int& ny ){
@@ -123,6 +124,11 @@ void startGame(const int& lap, const int& nx, const int& ny, int & snl, std::deq
     int food[2] = {0,0};
 
     sf::RenderWindow app(sf::VideoMode(1000,500,32),"Snake");
+    sf::SoundBuffer buffer;
+    buffer.loadFromFile("snd1.wav");
+
+    sf::Sound ateFruit;
+    ateFruit.setBuffer(buffer);
     
     createFood( bg, food, nx, ny );
     
@@ -184,6 +190,7 @@ void startGame(const int& lap, const int& nx, const int& ny, int & snl, std::deq
         }
         bool eat = eatFood(food, snake);
         if(eat){
+            ateFruit.play();
             createFood(bg, food, nx, ny);
             int x = std::get<0>(snake[0]);
             int y = std::get<1>(snake[0]);
