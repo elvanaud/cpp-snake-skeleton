@@ -6,8 +6,8 @@
 
 void createFood(std::vector<int>& bg, int food[2], const int& nx, const int& ny){
     if( food[0] == 0){
-        food[0] = rand()%(nx-2) + 2;
-        food[1] = rand()%(ny-2) + 2;
+        food[0] = rand()%(nx-2) + 1;
+        food[1] = rand()%(ny-2) + 1;
         bg[food[1]*nx+food[0]] = 2;
 
     }

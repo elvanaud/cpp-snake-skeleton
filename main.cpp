@@ -3,6 +3,7 @@
 #include <deque>
 #include <utility>
 #include <conio.h>
+#include <ctime>
 //#include "sys/ioctl.h"
 
 #include "stdlib.h"
@@ -67,9 +68,10 @@ void snake_movement(char key, int dxdy[2]){
 }
 
 bool verifyBorder(std::deque<std::pair<int,int>>& snake, const int& nx, const int& ny){
-  /*
-    your code here
-  */
+  //return true;
+  //snake against itself
+  for(int i = 1; i < snake.size(); i++)
+    if(snake[0] == snake[i]) return false;
   return true;
 }
 
@@ -80,7 +82,7 @@ std::deque<std::pair<int,int>> setupSnake( const int snake_len ){
   for(int i = 1; i < snake_len; i++)
   {
     std::pair<int,int> elem = snake.back();
-    snake.push_back(std::pair<int,int>{std::get<0>(elem)+1,std::get<1>(elem)});
+    snake.push_back(std::pair<int,int>{std::get<0>(elem)-1,std::get<1>(elem)});
   }
   return snake;
 }
@@ -132,7 +134,7 @@ int main(){
     const int lap=20;//200
 
     int snake_len = 3;
-
+    srand(time(nullptr));
     
     std::vector<int> background = backgroundSetup(nx, ny);
     printFrame(nx,ny, background);
